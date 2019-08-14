@@ -3,7 +3,7 @@ import { NestSchedule, Interval } from '@nestcloud/schedule';
 import { InjectLogger } from '@nestcloud/logger';
 import { LoggerInstance } from 'winston';
 import { BootValue } from '@nestcloud/boot';
-import { ConfigValue } from '@nestcloud/consul-config';
+import { ConfigValue } from '@nestcloud/config';
 import { WatchKV } from '@nestcloud/consul';
 
 @Injectable()
