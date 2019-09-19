@@ -9,10 +9,10 @@ consul:
   retryInterval: 5000
   service:
     id: null
-    name: nestcloud-starter-service
+    name: nestcloud-typeorm-example-service
     port: 8081
 config:
-  key: nestcloud-starter-service-config
+  key: nestcloud-typeorm-example-service-config
 dataSource:
   host: localhost
   port: 3306
@@ -29,20 +29,6 @@ loadbalance:
   rules:
     - service: your-service-name
       ruleCls: RoundRobinRule
-proxy:
-  routes:
-    - id: user
-      # self
-      uri: lb://nestcloud-starter-service
-      filters:
-        - name: AddRequestHeaderFilter
-          parameters:
-            test-header: test1213123123
-        - name: AddResponseHeaderFilter
-          parameters:
-            response-header: 123123hello
-    - id: article
-      uri: https://api.apiopen.top/recommendPoetry
 logger:
   level: info
   transports:
@@ -69,5 +55,3 @@ logger:
       # 200M
       maxsize: 209715200
       maxFiles: 10
-custom:
-  data: test

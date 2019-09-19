@@ -9,10 +9,10 @@ consul:
   retryInterval: 5000
   service:
     id: null
-    name: nestcloud-starter-service
+    name: nestcloud-typeorm-example-service
     port: ${{ PORT }}
 config:
-  key: nestcloud-starter-service-config
+  key: nestcloud-typeorm-example-service-config
 dataSource:
   host: ${{ DB_HOST }}
   port: ${{ DB_PORT }}
@@ -20,13 +20,6 @@ dataSource:
   password: ${{ DB_PWD }}
   synchronize: false
   maxQueryExecutionTime: 1000
-proxy:
-  routes:
-    - id: user
-      # self
-      uri: lb://nestcloud-starter-service
-    - id: article
-      uri: https://api.apiopen.top/recommendPoetry
 logger:
   level: info
   transports:

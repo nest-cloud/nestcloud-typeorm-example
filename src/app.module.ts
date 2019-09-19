@@ -5,7 +5,6 @@ import { ConfigModule } from '@nestcloud/config';
 import { ServiceModule } from '@nestcloud/service';
 import { LoadbalanceModule } from '@nestcloud/loadbalance';
 import { FeignModule } from '@nestcloud/feign';
-import { ScheduleModule } from '@nestcloud/schedule';
 import {
   NEST_BOOT,
   NEST_LOADBALANCE,
@@ -17,7 +16,6 @@ import {
 } from '@nestcloud/common';
 import { TypeOrmHealthIndicator, TerminusModule, TerminusModuleOptions } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProxyModule } from '@nestcloud/proxy';
 
 import * as controllers from './controllers';
 import * as repos from './repositories';
@@ -39,14 +37,12 @@ const getTerminusOptions = (db: TypeOrmHealthIndicator): TerminusModuleOptions =
 @Module({
   imports: [
     LoggerModule.register(),
-    ScheduleModule.register(),
     BootModule.register(__dirname, `bootstrap-${process.env.NODE_ENV || 'development'}.yml`),
     ConsulModule.register({ dependencies: [NEST_BOOT] }),
     ConfigModule.register({ dependencies: [NEST_BOOT, NEST_CONSUL] }),
     ServiceModule.register({ dependencies: [NEST_BOOT] }),
     LoadbalanceModule.register({ dependencies: [NEST_BOOT] }),
     FeignModule.register({ dependencies: [NEST_LOADBALANCE] }),
-    ProxyModule.register({ dependencies: [NEST_BOOT] }),
     TerminusModule.forRootAsync({
       inject: [TypeOrmHealthIndicator],
       useFactory: db => getTerminusOptions(db as TypeOrmHealthIndicator),
