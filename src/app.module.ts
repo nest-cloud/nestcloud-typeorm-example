@@ -40,7 +40,7 @@ const getTerminusOptions = (db: TypeOrmHealthIndicator): TerminusModuleOptions =
     BootModule.register(__dirname, `bootstrap-${process.env.NODE_ENV || 'development'}.yml`),
     ConsulModule.register({ dependencies: [NEST_BOOT] }),
     ConfigModule.register({ dependencies: [NEST_BOOT, NEST_CONSUL] }),
-    ServiceModule.register({ dependencies: [NEST_BOOT] }),
+    ServiceModule.register({ dependencies: [NEST_BOOT, NEST_CONSUL] }),
     LoadbalanceModule.register({ dependencies: [NEST_BOOT] }),
     FeignModule.register({ dependencies: [NEST_LOADBALANCE] }),
     TerminusModule.forRootAsync({

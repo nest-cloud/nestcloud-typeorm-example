@@ -1,16 +1,16 @@
 consul:
   host: ${{ CONSUL_HOST }}
   port: ${{ CONSUL_PORT }}
+service:
   discoveryHost: ${{ CONSUL_DISCOVERY_HOST }}
   healthCheck:
     timeout: 1s
     interval: 10s
   maxRetry: 5
   retryInterval: 5000
-  service:
-    id: null
-    name: nestcloud-typeorm-example-service
-    port: ${{ PORT }}
+  id: null
+  name: nestcloud-typeorm-example-service
+  port: ${{ PORT }}
 config:
   key: nestcloud-typeorm-example-service-config
 dataSource:
