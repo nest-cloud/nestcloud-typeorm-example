@@ -17,7 +17,7 @@ dataSource:
   host: localhost
   port: 3306
   username: root
-  password: Passw0rd
+  password: my-secret-pw
   synchronize: true
   maxQueryExecutionTime: 1000
 loadbalance:
