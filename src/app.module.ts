@@ -4,15 +4,13 @@ import { ConsulModule } from '@nestcloud/consul';
 import { ConfigModule } from '@nestcloud/config';
 import { ServiceModule } from '@nestcloud/service';
 import { LoadbalanceModule } from '@nestcloud/loadbalance';
-import { FeignModule } from '@nestcloud/feign';
+import { HttpModule } from '@nestcloud/http';
 import {
-  NEST_BOOT,
-  NEST_LOADBALANCE,
-  NEST_BOOT_PROVIDER,
-  NEST_TYPEORM_LOGGER_PROVIDER,
+  BOOT,
+  LOADBALANCE,
   components,
   repositories,
-  NEST_CONSUL,
+  CONSUL,
 } from '@nestcloud/common';
 import { TypeOrmHealthIndicator, TerminusModule, TerminusModuleOptions } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -21,7 +19,8 @@ import * as controllers from './controllers';
 import * as repos from './repositories';
 import * as services from './services';
 import * as clients from './clients';
-import { LoggerModule, TypeormLogger } from '@nestcloud/logger';
+import { LoggerModule, TypeormLogger, TYPEORM_LOGGER } from '@nestcloud/logger';
+import { resolve } from 'path';
 
 const getTerminusOptions = (db: TypeOrmHealthIndicator): TerminusModuleOptions => ({
   endpoints: [
@@ -36,32 +35,34 @@ const getTerminusOptions = (db: TypeOrmHealthIndicator): TerminusModuleOptions =
 
 @Module({
   imports: [
-    LoggerModule.register(),
-    BootModule.register(__dirname, `bootstrap-${process.env.NODE_ENV || 'development'}.yml`),
-    ConsulModule.register({ dependencies: [NEST_BOOT] }),
-    ConfigModule.register({ dependencies: [NEST_BOOT, NEST_CONSUL] }),
-    ServiceModule.register({ dependencies: [NEST_BOOT, NEST_CONSUL] }),
-    LoadbalanceModule.register({ dependencies: [NEST_BOOT] }),
-    FeignModule.register({ dependencies: [NEST_LOADBALANCE] }),
+    LoggerModule.forRoot(),
+    BootModule.forRoot({ filePath: resolve(__dirname, 'config.yaml') }),
+    ConsulModule.forRootAsync({ inject: [BOOT] }),
+    ConfigModule.forRootAsync({ inject: [BOOT, CONSUL] }),
+    ServiceModule.forRootAsync({ inject: [BOOT, CONSUL] }),
+    LoadbalanceModule.forRootAsync({ inject: [BOOT] }),
+    HttpModule.forRootAsync({ inject: [LOADBALANCE] }),
     TerminusModule.forRootAsync({
       inject: [TypeOrmHealthIndicator],
       useFactory: db => getTerminusOptions(db as TypeOrmHealthIndicator),
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: (config: Boot, logger: TypeormLogger) => ({
-        type: 'mysql',
-        host: config.get('dataSource.host', 'localhost'),
-        port: config.get('dataSource.port', 3306),
-        username: config.get('dataSource.username', 'root'),
-        password: config.get('dataSource.password', 'my-secret-pw'),
-        database: config.get('dataSource.database', 'nestcloud'),
-        entities: [__dirname + '/entities/*{.ts,.js}'],
-        synchronize: config.get('dataSource.synchronize', false),
-        maxQueryExecutionTime: config.get('dataSource.maxQueryExecutionTime', 1000),
-        logging: ['error', 'warn'],
-        logger,
-      }),
-      inject: [NEST_BOOT_PROVIDER, NEST_TYPEORM_LOGGER_PROVIDER],
+      useFactory: (config: Boot, logger: TypeormLogger) => {
+        return ({
+          type: 'mysql',
+          host: config.get('dataSource.host', 'localhost'),
+          port: config.get('dataSource.port', 3306),
+          username: config.get('dataSource.username', 'root'),
+          password: config.get('dataSource.password', 'my-secret-pw'),
+          database: config.get('dataSource.database', 'nestcloud'),
+          entities: [__dirname + '/entities/*{.ts,.js}'],
+          synchronize: config.get('dataSource.synchronize', false),
+          maxQueryExecutionTime: config.get('dataSource.maxQueryExecutionTime', 1000),
+          logging: ['error', 'warn'],
+          logger,
+        });
+      },
+      inject: [BOOT, TYPEORM_LOGGER],
     }),
   ],
   controllers: components(controllers),

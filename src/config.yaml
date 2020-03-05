@@ -12,7 +12,7 @@ service:
   name: nestcloud-typeorm-example-service
   port: 8081
 config:
-  key: nestcloud-typeorm-example-service-config
+  name: nestcloud-typeorm-example-service-config
 dataSource:
   host: localhost
   port: 3306
@@ -21,14 +21,10 @@ dataSource:
   synchronize: true
   maxQueryExecutionTime: 1000
 loadbalance:
-  # Supports:
-  # RandomRule
-  # RoundRobinRule
-  # WeightedResponseTimeRule
-  ruleCls: RandomRule
-  rules:
-    - service: your-service-name
-      ruleCls: RoundRobinRule
+  rule: RandomRule
+  services:
+    - name: your-service-name
+      rule: RoundRobinRule
 logger:
   level: info
   transports:
