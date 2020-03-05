@@ -29,7 +29,7 @@ $ yarn install
 
 ```bash
 docker run -d --name dev-consul -e CONSUL_BIND_INTERFACE=eth0 -p 8500:8500 consul
-docker run -d --name dev-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -e MYSQL_DATABASE=nestcloud -p 3306:3306 mysql:5.7
+docker run -d --name dev-mysql -e MYSQL_ROOT_PASSWORD=Passw0rd -e MYSQL_DATABASE=nestcloud -p 3306:3306 mysql:5.7
 ```
 
 ## Running the app
